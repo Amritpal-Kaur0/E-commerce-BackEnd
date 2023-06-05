@@ -9,7 +9,7 @@ router.get('/', async(req, res) => {
   try {
     const productData = await Product.findAll({
       // be sure to include its associated Category and Tag data
-      include: [{ model: Category }, { model: ProductTag },{model:Tag}],
+      include: [{ model: Category }],
     });
     res.status(200).json(productData);
   } catch (err) {
@@ -22,6 +22,7 @@ router.get('/:id',async (req, res) => {
   // find a single product by its `id`
   try {
     const productData = await Product.findByPk(req.params.id, {
+       // be sure to include its associated Category and Tag data
       include: [{ model: Category }, { model: ProductTag }],
     });
 
@@ -34,7 +35,7 @@ router.get('/:id',async (req, res) => {
   } catch (err) {
     res.status(500).json(err);
   }
-  // be sure to include its associated Category and Tag data
+ 
 });
 
 // create new product
@@ -47,8 +48,14 @@ router.post('/', (req, res) => {
       tagIds: [1, 2, 3, 4]
     }
   */
-  Product.create(req.body)
-    .then((product) => {
+ Product.create({
+  product_name:req.body.product_name,
+  stock:req.body.stock,
+  price:req.body.price,
+  category_id:req.body.category_id,
+  tagIds:req.body.tagIds,
+ })
+ .then((newproduct) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
       if (req.body.tagIds.length) {
         const productTagIdArr = req.body.tagIds.map((tag_id) => {
@@ -60,7 +67,7 @@ router.post('/', (req, res) => {
         return ProductTag.bulkCreate(productTagIdArr);
       }
       // if no product tags, just respond
-      res.status(200).json(product);
+      res.status(200).json(newproduct);
     })
     .then((productTagIds) => res.status(200).json(productTagIds))
     .catch((err) => {
@@ -113,6 +120,18 @@ router.put('/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
   // delete one product by its `id` value
+  
+
+  Product.destroy({
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then((deletedproduct) => {
+      res.json(deletedproduct);
+    })
+    .catch((err) => res.json(err));
 });
+
 
 module.exports = router;
