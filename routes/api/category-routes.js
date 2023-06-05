@@ -8,10 +8,7 @@ router.get('/',async (req, res) => {
   try{
     const categoryData= await Category.findAll({
       // be sure to include its associated Products
-      include:{
-        model:Product,
-        attributes:['id','product_name','price','stock','category_id']
-      }
+      include:[{model:Product}]
     });
     res.status(200).json(categoryData);
     return;
@@ -25,10 +22,7 @@ router.get('/:id',async (req, res) => {
   try{
     // be sure to include its associated Products
     const categoryData= await Category.findByPk(req.params.id,{
-      include:{
-        model:Product,
-        attributes:['id','product_name','price','stock','category_id']
-      }
+      include:[{model:Product}]
     });
 
     if(!categoryData){
@@ -47,7 +41,7 @@ router.post('/', (req, res) => {
   Category.create({
     category_name : req.body.category_name,
   })
-    .then((newBook) => {
+    .then((newCategory) => {
       // Send the newly created row as a JSON object
       res.json(newCategory);
     })
