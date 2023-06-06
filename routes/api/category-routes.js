@@ -8,7 +8,7 @@ router.get('/',async (req, res) => {
   try{
     const categoryData= await Category.findAll({
       // be sure to include its associated Products
-      // include:[{model:Product}]
+      include:[{model:Product}]
     });
     res.status(200).json(categoryData);
     return;
@@ -54,13 +54,12 @@ router.put('/:id', (req, res) => {
   // update a category by its `id` value
   Category.update(
     // All the fields you can update and the data attached to the request body.
-    {
-      category_name : req.body.  category_name,
-    },
+   req.body,
     {
       // Gets the category based on the id given in the request parameters
       where: {
         id: req.params.id,
+        // include:[{model:Product}]
       },
     }
   ).then((updatedCategory) => {
@@ -70,17 +69,24 @@ router.put('/:id', (req, res) => {
     .catch((err) => res.json(err));
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async(req, res) => {
   // delete a category by its `id` value
   Category.destroy({
-    where:{
-      id:req.body.id,
-    },
+    where: {
+      id: req.params.id
+    }
   })
-  .then((deleteCategory)=>{
-    res.status(200).json(deleteCategory)
+  .then((CategoryData) => {
+    if (!CategoryData) {
+      res.status(404).json({ message: " Category Not found" });
+      return;
+    }
+    res.json(CategoryData);
   })
-  .catch((err)=>res.json(err))
+  .catch((err) => {
+    console.log(err);
+    res.status(500).json(err);
+  });
 });
 
 module.exports = router;
