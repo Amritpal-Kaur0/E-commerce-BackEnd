@@ -19,6 +19,7 @@
 
 ## Description
 This is the README file for the Backend E-commerce Project developed using Node.js, Sequelize, and Express.js. This project serves as the backend for an e-commerce application, providing the necessary APIs and functionality to manage Categories, Tags, and Products.
+![2023-06-09 (1)](https://github.com/Amritpal-Kaur0/E-commerce-BackEnd/assets/128442182/73135b30-8bd6-42d1-95a7-910dacec6cb1)
 
 ## Installation
 To set up the project on your local machine, follow these steps:
